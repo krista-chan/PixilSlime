@@ -3,15 +3,6 @@
 version = 3
 
 [[package]]
-name = "PixilSlime"
-version = "0.1.0"
-dependencies = [
- "find_folder",
- "fps_counter",
- "piston_window",
-]
-
-[[package]]
 name = "ab_glyph_rasterizer"
 version = "0.1.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1226,6 +1217,15 @@ checksum = "bb4932383d894231cdb3fcb0d26607c63b153b808b5621d911df6b929dd53b32"
 dependencies = [
  "piston-graphics_api_version",
  "pistoncore-input",
+]
+
+[[package]]
+name = "pixil_slime"
+version = "0.1.0"
+dependencies = [
+ "find_folder",
+ "fps_counter",
+ "piston_window",
 ]
 
 [[package]]
