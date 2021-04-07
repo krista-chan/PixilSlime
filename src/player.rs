@@ -1,7 +1,8 @@
-use crate::{collision::{Collider, Event}, obj::Object, sprite::{Sprite, SpriteEv}, utils::{PlayerController, PowerupState, Rect, Vector2}};
+use crate::{collision::{Collider, Event}, obj::{Object, ObjectKind}, sprite::{Sprite, SpriteEv}, utils::{PlayerController, PowerupState, Rect, Vector2}};
 
 use piston_window::{*, Event as WindowEvent};
 
+#[derive(Clone, Debug)]
 pub struct Player {
     pub flip: bool,
     pub grounded: bool,
@@ -12,6 +13,7 @@ pub struct Player {
     pub velocity: Vector2,
     pub controller: PlayerController,
     pub friction: f64,
+    pub dead: bool
 }
 
 impl Player {
@@ -31,6 +33,7 @@ impl Player {
                 right: false,
             },
             friction: 0.0,
+            dead: false
         }
     }
 
@@ -49,7 +52,10 @@ impl Player {
         let collision = self.hitbox.1.collision(&self.hitbox.0, &object.to_vec());
 
         if collision {
-            if let Some((interact, pos)) = &self.hitbox.1.interaction {
+            if let Some((interact, pos, kind)) = &self.hitbox.1.interaction {
+                if *kind == ObjectKind::SPIKE {
+                    self.dead = true;
+                }
                 match interact {
                     Event::Down => {
                         self.grounded = true;
@@ -93,8 +99,10 @@ impl Player {
 				match key {
 					Key::Left  => self.controller.left = true,
 					Key::Right => self.controller.right = true,
-					Key::Space | Key::Up => self.controller.up = true,
+					Key::Space => if self.dead { self.dead = false } else { self.controller.up = true },
+                    Key::Up => self.controller.up = true,
                     Key::Down  => self.controller.down = true,
+                    Key::K => self.dead = true,
 					_ => {}
 				}
 			}

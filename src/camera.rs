@@ -1,6 +1,7 @@
 use crate::{obj::Object, player::Player};
 use piston_window::*;
 
+#[derive(Clone, Debug)]
 pub struct Camera {
     pub x: f64,
     pub y: f64,

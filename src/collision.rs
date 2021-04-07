@@ -1,4 +1,4 @@
-use crate::{obj::Object, utils::Rect};
+use crate::{obj::{Object, ObjectKind}, utils::Rect};
 
 #[derive(Debug, Clone, Copy)]
 pub enum Event {
@@ -10,7 +10,8 @@ pub enum Event {
 
 #[derive(Debug, Clone, Copy)]
 pub struct Collider {
-    pub interaction: Option<(Event, f64)>,
+    /// `(direction, location, kind)`
+    pub interaction: Option<(Event, f64, ObjectKind)>,
 }
 
 impl Collider {
@@ -27,18 +28,18 @@ impl Collider {
 
                     if y * y > x * x {
                         if y > 0.0 {
-                            self.interaction = Some((Event::Up, obj.rect.d()));
+                            self.interaction = Some((Event::Up, obj.rect.d(), obj.kind));
                             return true;
                         } else {
-                            self.interaction = Some((Event::Down, obj.rect.u() - player.s));
+                            self.interaction = Some((Event::Down, obj.rect.u() - player.s, obj.kind));
                             return true;
                         }
                     } else {
                         if x > 0.0 {
-                            self.interaction = Some((Event::Left, obj.rect.r()));
+                            self.interaction = Some((Event::Left, obj.rect.r(), obj.kind));
                             return true;
                         } else {
-                            self.interaction = Some((Event::Right, obj.rect.l() - player.s));
+                            self.interaction = Some((Event::Right, obj.rect.l() - player.s, obj.kind));
                             return true;
                         }
                     }

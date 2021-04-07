@@ -3,7 +3,7 @@ use std::{io::prelude::Read, path::PathBuf};
 
 use piston_window::{Flip, PistonWindow};
 
-use crate::{obj::Object, sprite::Sprite};
+use crate::{obj::{Object, ObjectKind}, sprite::Sprite};
 
 #[derive(Clone, Copy, Debug)]
 pub struct Rect {
@@ -65,6 +65,7 @@ impl Vector2 {
     }
 }
 
+#[derive(Clone, Debug)]
 pub struct PlayerController {
     pub up: bool,
     pub down: bool,
@@ -115,15 +116,21 @@ pub fn parse_level_tiles(assets: PathBuf, level_name: &str, w: &mut PistonWindow
                 '=' => {
                     let rect = Rect::new(col as f64 * 40.0, row as f64 * 40.0, 0.0, 0.0, 40.0);
                     let ground_tile = Sprite::new(ground_texture.clone());
-                    let object = Object::new(ground_tile, rect, true);
+                    let object = Object::new(ground_tile, rect, true, ObjectKind::GROUND);
                     objects.push(object);
                 },
                 '-' => {
                     let rect = Rect::new(col as f64 * 40.0, row as f64 * 40.0, 0.0, 0.0, 40.0);
                     let ground_tile = Sprite::new(underground_tx.clone());
-                    let object = Object::new(ground_tile, rect, true);
+                    let object = Object::new(ground_tile, rect, true, ObjectKind::GROUND);
                     objects.push(object);
                 },
+                '^' => {
+                    let rect = Rect::new(col as f64 * 40.0, row as f64 * 40.0, 0.0, 0.0, 40.0);
+                    let ground_tile = Sprite::new(underground_tx.clone());
+                    let object = Object::new(ground_tile, rect, true, ObjectKind::SPIKE);
+                    objects.push(object);
+                }
                 _ => (),
             }
         }
@@ -132,6 +139,7 @@ pub fn parse_level_tiles(assets: PathBuf, level_name: &str, w: &mut PistonWindow
     (objects, m_w, m_h)
 }
 
+#[derive(Clone, Debug)]
 pub enum PowerupState {
     None
 }

@@ -9,11 +9,19 @@ pub struct Object {
 	pub sprite: Sprite,
 	pub solid: bool,
 	pub rect: Rect,
+    pub kind: ObjectKind
+}
+
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub enum ObjectKind {
+    GROUND,
+    // BACKGROUND,
+    SPIKE
 }
 
 impl Object {
-    pub fn new(sprite: Sprite, rect: Rect, solid: bool) -> Object {
-        Object { sprite, rect, solid }
+    pub fn new(sprite: Sprite, rect: Rect, solid: bool, kind: ObjectKind) -> Object {
+        Object { sprite, rect, solid, kind }
     }
 }
 
@@ -22,7 +30,7 @@ impl SpriteEv for Object {
         let texture = &self.sprite[0];
         let rect = &self.rect;
 
-        w.draw_2d(e, |c,g,_d| {
+        w.draw_2d(e, |c,g,_| {
 			image(
 				texture, 
 				c.trans(rect.x, rect.y)
