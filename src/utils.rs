@@ -3,7 +3,7 @@ use std::{io::prelude::Read, path::PathBuf};
 
 use piston_window::{Flip, PistonWindow};
 
-use crate::{obj::{Object, ObjectKind}, sprite::Sprite};
+use crate::{obj::{Object, ObjectKind}, scene::Scene, sprite::Sprite};
 
 #[derive(Clone, Copy, Debug)]
 pub struct Rect {
@@ -137,6 +137,10 @@ pub fn parse_level_tiles(assets: PathBuf, level_name: &str, w: &mut PistonWindow
     }
 
     (objects, m_w, m_h)
+}
+
+pub fn get_level_scene(assets: PathBuf, level: u32, window: &mut PistonWindow) -> Scene {
+    Scene::new(assets, format!("{}.txt", level), window)
 }
 
 #[derive(Clone, Debug)]

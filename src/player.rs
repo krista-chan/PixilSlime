@@ -1,6 +1,11 @@
-use crate::{collision::{Collider, Event}, obj::{Object, ObjectKind}, sprite::{Sprite, SpriteEv}, utils::{PlayerController, PowerupState, Rect, Vector2}};
+use crate::{
+    collision::{Collider, Event},
+    obj::{Object, ObjectKind},
+    sprite::{Sprite, SpriteEv},
+    utils::{PlayerController, PowerupState, Rect, Vector2},
+};
 
-use piston_window::{*, Event as WindowEvent};
+use piston_window::{Event as WindowEvent, *};
 
 #[derive(Clone, Debug)]
 pub struct Player {
@@ -13,7 +18,8 @@ pub struct Player {
     pub velocity: Vector2,
     pub controller: PlayerController,
     pub friction: f64,
-    pub dead: bool
+    pub dead: bool,
+    pub win: bool,
 }
 
 impl Player {
@@ -33,7 +39,8 @@ impl Player {
                 right: false,
             },
             friction: 0.0,
-            dead: false
+            dead: false,
+            win: false,
         }
     }
 
@@ -95,43 +102,55 @@ impl Player {
 
     pub fn handle_keypress(&mut self, e: &piston_window::Event) {
         if let Some(b) = e.press_args() {
-			if let Button::Keyboard(key) = b {
-				match key {
-					Key::Left  => self.controller.left = true,
-					Key::Right => self.controller.right = true,
-					Key::Space => if self.dead { self.dead = false } else { self.controller.up = true },
+            if let Button::Keyboard(key) = b {
+                match key {
+                    Key::Left => self.controller.left = true,
+                    Key::Right => self.controller.right = true,
+                    Key::Space => {
+                        if self.dead {
+                            self.dead = false
+                        } else {
+                            self.controller.up = true
+                        }
+                    }
                     Key::Up => self.controller.up = true,
-                    Key::Down  => self.controller.down = true,
+                    Key::Down => self.controller.down = true,
                     Key::K => self.dead = true,
-					_ => {}
-				}
-			}
-		}
+                    Key::W => self.win = true,
+                    _ => {}
+                }
+            }
+        }
 
-        if let Some(b) = e.release_args(){
-			if let Button::Keyboard(key) = b {
-				match key {
-					Key::Left => self.controller.left = false,
-					Key::Right => self.controller.right = false,
-					Key::Space | Key::Up => self.controller.up = false,
+        if let Some(b) = e.release_args() {
+            if let Button::Keyboard(key) = b {
+                match key {
+                    Key::Left => self.controller.left = false,
+                    Key::Right => self.controller.right = false,
+                    Key::Space | Key::Up => self.controller.up = false,
                     Key::Down => self.controller.down = false,
-					_ => {}
-				}
-			}
-		}
+                    _ => {}
+                }
+            }
+        }
     }
 }
 
 impl SpriteEv for Player {
-	fn render(&mut self, e: &WindowEvent, w: &mut PistonWindow){
-		let texture = &self.sprite[(if self.flip { 1 } else { 0 })];
-		let rect = &self.hitbox.0;
-		w.draw_2d(e, |c,g,_| {
-			image(
-				texture, 
-				c.trans(rect.x, rect.y)
-				.scale(rect.s / texture.get_width() as f64, rect.s / texture.get_height() as f64)
-				.transform, g);
-		});
-	}
+    fn render(&mut self, e: &WindowEvent, w: &mut PistonWindow) {
+        let texture = &self.sprite[(if self.flip { 1 } else { 0 })];
+        let rect = &self.hitbox.0;
+        w.draw_2d(e, |c, g, _| {
+            image(
+                texture,
+                c.trans(rect.x, rect.y)
+                    .scale(
+                        rect.s / texture.get_width() as f64,
+                        rect.s / texture.get_height() as f64,
+                    )
+                    .transform,
+                g,
+            );
+        });
+    }
 }

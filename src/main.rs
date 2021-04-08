@@ -10,11 +10,9 @@ mod scene;
 mod sprite;
 mod utils;
 use scene::Scene;
+use utils::get_level_scene;
 
-pub struct Game {
-    level: u32,
-    scene: Scene,
-}
+pub struct TheLevelThingy(pub Scene);
 
 fn main() {
     let mut window: PistonWindow = WindowSettings::new("PixilSlime", (800, 600))
@@ -29,10 +27,45 @@ fn main() {
         .expect("ASSET ERROR: Unable to load font");
     let mut fps_counter = FPSCounter::new();
 
-    let mut scene = Scene::new(assets, "1.txt".to_string(), &mut window);
+    let mut level_number = 0;
+    let mut scene: Scene = get_level_scene(assets.clone(), 1, &mut window);
+
+    let window_size = window.size();
 
     while let Some(e) = window.next() {
         let fps = format!("{} fps", fps_counter.tick().to_string());
+
+        if level_number == 0 {
+            window.draw_2d(&e, |c, g, d| {
+                clear(color::hex("facade"), g);
+                let transform = c.transform.trans(window_size.width/2.0, window_size.height/2.0);
+                text::Text::new_color(color::hex("000000"), 60)
+                    .draw("Press space to start!", &mut glyphs, &c.draw_state, transform, g)
+                    .unwrap();
+
+                glyphs.factory.encoder.flush(d);
+            });
+
+            if let Some(b) = e.press_args() {
+                if let Button::Keyboard(key) = b {
+                    match key {
+                        Key::Space => {
+                            level_number += 1;
+                            scene = get_level_scene(assets.clone(), level_number, &mut window);
+                        }
+                        _ => ()
+                    }
+                }
+            }
+
+            continue;
+        }
+
+        if scene.player.win {
+            level_number += 1;
+            scene = get_level_scene(assets.clone(), level_number, &mut window)
+        }
+
         scene.update(&e, &mut window);
 
         let (width, height): (f64, f64) = window.size().into();
