@@ -65,6 +65,6 @@ impl Camera {
     }
 
     pub fn resize_to_window(&mut self, player: &mut Player) {
-        self.h = player.hitbox.0.y/2.0;// - self.y*2.0;
+        self.h = player.hitbox.0.y/2.0;
     }
 }

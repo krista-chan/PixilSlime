@@ -20,6 +20,7 @@ pub struct Player {
     pub friction: f64,
     pub dead: bool,
     pub win: bool,
+    pub anim_frame: u32
 }
 
 impl Player {
@@ -41,6 +42,7 @@ impl Player {
             friction: 0.0,
             dead: false,
             win: false,
+            anim_frame: 0
         }
     }
 
@@ -138,6 +140,7 @@ impl Player {
 
 impl SpriteEv for Player {
     fn render(&mut self, e: &WindowEvent, w: &mut PistonWindow) {
+        // Normal walk frames
         let texture = &self.sprite[(if self.flip { 1 } else { 0 })];
         let rect = &self.hitbox.0;
         w.draw_2d(e, |c, g, _| {
@@ -145,7 +148,7 @@ impl SpriteEv for Player {
                 texture,
                 c.trans(rect.x, rect.y)
                     .scale(
-                        rect.s / texture.get_width() as f64,
+                        rect.s  / texture.get_width() as f64,
                         rect.s / texture.get_height() as f64,
                     )
                     .transform,

@@ -18,7 +18,7 @@ pub struct Scene {
 impl Scene {
     pub fn new(assets: PathBuf, level_name: String, w: &mut PistonWindow) -> Scene {
         let (objects, m_w, m_h) = utils::parse_level_tiles(assets.clone(), level_name.as_str(), w);
-        let (width, height) = (w.size().width, w.size().height);
+        // let (width, height) = (w.size().width, w.size().height);
 
         let sprite = Sprite::texture_load(assets.join("placeholder-tile.png"), w, Flip::None);
         let sprite_l =
@@ -30,8 +30,8 @@ impl Scene {
         let player_rect = Rect::new(0.0, 0.0, 5.0, 0.0, 40.0);
         let player = Player::new(player_sprite, player_rect);
 
-        let cam_x = width / 2.0 - 50.0;
-        let cam_y = height / 2.0 - 50.0;
+        let cam_x = 800.0 / 2.0 - 50.0;
+        let cam_y = 600.0 / 2.0 - 50.0;
 
         let camera = Camera::new(cam_x, cam_y, 100.0, 100.0, m_w, m_h);
 
